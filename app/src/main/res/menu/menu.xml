@@ -7,12 +7,12 @@
         android:title="Edit name"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/export_file"
-        android:title="Export to file"
+    <item android:id="@+id/save"
+        android:title="Save"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/import_file"
-        android:title="Import from file"
+    <item android:id="@+id/load_save"
+        android:title="Load a save"
         app:showAsAction="never"/>
 
 </menu>

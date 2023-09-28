@@ -1,7 +1,5 @@
 package com.example.todolist;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -18,14 +16,11 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.ContactsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -88,12 +83,12 @@ public class MainActivity extends AppCompatActivity implements CreateTodoDialog.
             editNameDialog.show(getSupportFragmentManager(), "edit_name_dialog");
             return true;
         }
-        if(item.getItemId() == R.id.export_file) {
-            exportToFile();
+        if(item.getItemId() == R.id.save) {
+            save();
             return true;
         }
-        if(item.getItemId() == R.id.import_file) {
-            importFromFile();
+        if(item.getItemId() == R.id.load_save) {
+            loadSave();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -131,12 +126,6 @@ public class MainActivity extends AppCompatActivity implements CreateTodoDialog.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)  {
                 File directory = getExternalFilesDir(null);
                 chooseFile(directory);
-                //Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                //intent.addCategory(Intent.CATEGORY_OPENABLE);
-                //intent.setType("*/*");
-                //getFilename.launch(intent);
-                // startActivityForResult(intent, PICK_FILE_REQUEST);
-                // database.importFromFile("", directory);
             } else {
                 Toast.makeText(this, "Read permission is needed to store data", Toast.LENGTH_SHORT).show();
             }
@@ -188,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements CreateTodoDialog.
         return value;
     }
 
-    public void importFromFile() { askReadPermission(); }
+    public void loadSave() { askReadPermission(); }
     public void chooseFile(File directory) {
         File[] files = directory.listFiles();
         final String[] fileNames = new String[files.length];
@@ -227,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements CreateTodoDialog.
         return todoList;
     }
 
-    public void exportToFile() {
+    public void save() {
         askWritePermission();
     }
     private void saveTodoListAsFile(File directory) {
@@ -255,29 +244,36 @@ public class MainActivity extends AppCompatActivity implements CreateTodoDialog.
     }
 
 
-    private ActivityResultLauncher<Intent> getFilename = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                result.getResultCode();
-                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    Uri uri = result.getData().getData();
-                    String displayName = null;
-                    if (uri.getScheme().equals("content")) {
-                        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-                        if (cursor != null && cursor.moveToFirst()) {
-                            int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                            if (nameIndex != -1) {
-                                displayName = cursor.getString(nameIndex);
-                            }
-                            cursor.close();
-                        }
-                    }
-                    if (displayName == null) {
-                        displayName = uri.getLastPathSegment();
-                    }
-                    Log.e("FILENAME", displayName);
-                }
-            });
+    //private ActivityResultLauncher<Intent> getFilename = registerForActivityResult(
+    //        new ActivityResultContracts.StartActivityForResult(),
+    //        result -> {
+    //            result.getResultCode();
+    //            if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+    //                Uri uri = result.getData().getData();
+    //                String displayName = null;
+    //                if (uri.getScheme().equals("content")) {
+    //                    Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+    //                    if (cursor != null && cursor.moveToFirst()) {
+    //                        int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+    //                        if (nameIndex != -1) {
+    //                            displayName = cursor.getString(nameIndex);
+    //                        }
+    //                        cursor.close();
+    //                    }
+    //                }
+    //                if (displayName == null) {
+    //                    displayName = uri.getLastPathSegment();
+    //                }
+    //                Log.e("FILENAME", displayName);
+    //            }
+    //        });
 
 
 }
+
+//Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//intent.addCategory(Intent.CATEGORY_OPENABLE);
+//intent.setType("*/*");
+//getFilename.launch(intent);
+// startActivityForResult(intent, PICK_FILE_REQUEST);
+// database.importFromFile("", directory);
